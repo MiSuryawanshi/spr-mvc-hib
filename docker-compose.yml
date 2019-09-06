@@ -1,32 +1,40 @@
 version: "3.7"
 services:
         smhapp:
-         image: smh:1.0
+         image: smh:10.0
          container_name: smhapp
          networks:
-           - smhnet
+           - skynetbr1
          ports:
            - "8087:8080"
          depends_on:
-            - smhdb
+            - smhdbnew
+         links:
+            - smhdbnew
          restart: always
 
-        smhdb:
-         image: mysql:latest
-         container_name: smhdb
+        smhdbnew:
+         image: mysql:5.7
+         container_name: smhdbnew
          environment:
            - MYSQL_ROOT_PASSWORD=root
            - MYSQL_DATABASE=hibnatedb
          networks:
-            - smhnet
+              skynetbr1:
+                ipv4_address: 102.12.1.2 
          ports:
-           - "3306:3306"
+           - "3307:3306"
          volumes:
-           - smhvol:/var/lib/mysql
+           - /ALM/docker/demo/volumes/smhdbvol:/var/lib/mysql
          restart: always
 
 volumes:
-  smhvol:
+  smhdbvol:
 
 networks:
-  smhnet:
+  skynetbr1:
+        driver: bridge
+        ipam:
+         config:
+           - subnet: 102.12.1.0/24
+            
